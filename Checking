@@ -1,0 +1,190 @@
+
+public class Checking {
+	public static String[] Array = new String[3]; 
+	
+	
+		
+	public static int RomeToArab()
+	{
+	for(int k = 0; k <= 2; k = k+2)
+	{
+		if( Array[k].equals("I"))
+		{
+			Array[k] = "1";
+		}
+		else if( Array[k].equals("II"))
+		{
+			Array[k] = "2";
+		}
+		else if( Array[k].equals("III"))
+		{
+			Array[k] = "3";
+		}
+		else if( Array[k].equals("IV"))
+		{
+			Array[k] = "4";
+		}
+		else if( Array[k].equals("V"))
+		{
+			Array[k] = "5";
+		}
+		else if( Array[k].equals("VI"))
+		{
+			Array[k] = "6";
+		}
+		else if( Array[k].equals("VII"))
+		{
+			Array[k] = "7";
+		}
+		else if( Array[k].equals("VIII"))
+		{
+			Array[k] = "8";
+		}
+		else if( Array[k].equals("IX"))
+		{
+			Array[k] = "9";
+		}
+		else if( Array[k].equals("X"))
+		{
+			Array[k] = "10";
+		}
+		else 
+		{
+		
+			System.out.println("Какое-то другое число...");
+			return 1;
+		}
+	}
+	
+//
+		return 0;
+	}
+
+	public static void StringToArray(String SSS)
+	{
+	
+	
+	int ArrPos = 0; // Номер ячейки массива. Сначала 0, потом добавляется после каждой записи.
+	StringBuilder sb = new StringBuilder();
+	int sbCount = 0; 
+	
+	boolean[] TrueOperation = new boolean[SSS.length()];
+	
+	for (int i = 0; i < SSS.length(); i++) // прогоняем строку, ищем знакм операции
+	{
+		if	(SSS.charAt(i) == '+' || SSS.charAt(i) == '-'||
+			SSS.charAt(i) == '*' || SSS.charAt(i) == '/' ||
+			SSS.charAt(i) == '(' || SSS.charAt(i) == ')')
+			TrueOperation[i] = true; 
+	}
+		
+	for (int i = 0; i < SSS.length(); i++) // прогоняем строку, записываем массив
+	 {
+		
+		if	(TrueOperation[i] == true)
+			{
+		
+			Array[ArrPos] = Character.toString(SSS.charAt(i)); // добавляем символ ( 
+			ArrPos++;
+			}
+		
+		
+		else if  (TrueOperation[i] == false)
+			{
+					sb.append(SSS.charAt(i));
+					sbCount++;
+			for ( ; ; )
+			{ 
+				if (SSS.length() != i+1)
+				{
+				if(TrueOperation[i+1] == true)
+					{
+					Array[ArrPos] = sb.toString();// запись цифры из буфера в массив 
+					ArrPos++;
+					sb.delete(0, sbCount+1);
+					break;
+							
+					}
+				
+				if(TrueOperation[i+1] == false)
+					{
+					i++;
+					sb.append(SSS.charAt(i));
+					sbCount++;
+					
+					}
+				}
+				else if (SSS.length() == i+1)
+				{
+					Array[ArrPos] = sb.toString();// запись цифры из буфера в массив 
+					ArrPos++;
+					sb.delete(0, sbCount+1);
+					break;
+				}
+			}
+			}
+			
+	 }			
+
+
+	
+		
+		
+
+
+	}
+	
+	public static int CheckingRome()
+{
+	for(int k = 0; k <= 2; k = k+2)
+	{
+		if( Array[k].equals("1") || Array[k].equals("2") ||
+			Array[k].equals("3") || Array[k].equals("4") || 
+			Array[k].equals("5") || Array[k].equals("6") || 
+			Array[k].equals("7") || Array[k].equals("8") || 
+			Array[k].equals("9") || Array[k].equals("10") ) 
+		{
+		continue;
+		}
+		else
+		{
+			System.out.println("Какое-то другое число...");
+			return 1;
+		}
+	}
+	
+	return 0;
+
+}
+
+	public static double Calculation()
+{
+	
+double a, b, result = 0;
+
+a = Double.valueOf(Array[0]);
+b = Double.valueOf(Array[2]);
+
+	
+if(Array[1].equals("+"))
+{
+	result = a+b;
+}
+if(Array[1].equals("-"))
+{
+	result = a-b;
+}
+if(Array[1].equals("*"))
+{
+	result = a*b;
+}
+if(Array[1].equals("/"))
+{
+	result = a/b;
+}
+
+	System.out.println("RESULT IS: " + result + "\n\n\n\n");
+return result;
+}
+
+	}
