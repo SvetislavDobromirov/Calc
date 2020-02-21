@@ -1,0 +1,173 @@
+import java.util.Scanner;
+
+
+public class Easycalc {
+	public static Scanner in = new Scanner(System.in);	
+	public static void main(String[] args)
+	{
+		
+		for (; ; )
+		{
+			
+		for(; ;)
+		{
+			System.out.println("Введите выражение.\n Условие для ввода выражения:\n" +
+					"1. Допустимы знаки +, -, /, *\n" +
+					"2. Только римские или только арабские цифры\n" +
+					"3. Цифра ввода не более 10 или не более X\n" +
+					"4. Только два числа для операций\n" +
+					"5. После ввода нажмие Enter\n");
+			
+		String Str;
+		Str = EnterStr();
+		if (Str.length() < 3)
+		{
+			System.out.println("Строка слишком короткая, ошибка, повторите ввод.");
+			break;
+		}
+			
+		CheckEnter(Str);
+	
+		System.out.println("\n\n");
+		}
+	}
+	}
+	
+	public static String EnterStr()
+	{
+			
+		String Str;
+		Str = in.next();
+		//System.out.println(Str);
+		
+		return Str;
+	}
+	
+	public static int CheckEnter(String Str)
+	{
+		char letter;
+		int ret = 3;
+		for (int i = 0; i < Str.length(); i++)
+		{
+			letter = Str.charAt(i);
+			
+			if( letter != '+' && letter != '-' && 
+				letter != '*' && letter != '/' && 
+				letter != '0' && letter != '1' && 
+				letter != '2' && letter != '3' && 
+				letter != '4' && letter != '5' && 
+				letter != '6' && letter != '7' && 
+				letter != '8' && letter != '9' &&
+				letter != 'I' && letter != 'V'  &&
+				letter != 'X') 
+			{
+				System.out.println("Error. Incorect Symbol");
+				return 1;
+			}
+		}
+		
+		
+		
+		int checkLOP = 0;
+		for (int i = 0; i < Str.length(); i++)
+		{
+			letter = Str.charAt(i);
+			
+			if( letter == 'I' || letter == 'V'  ||
+				letter == 'X') 
+			{
+				for(int k = i; k < Str.length(); k++)
+				{
+					letter = Str.charAt(k);
+					if(letter == '+' || letter == '-' &&
+						letter != '*' && letter != '/')
+					{
+					checkLOP ++;
+					if(checkLOP > 1)
+					{
+						checkLOP = 0;
+						System.out.println("Больше двух операций, ошибка");
+						return 1;
+					}
+					}
+					
+					if( letter != 'I' && letter != 'V'  &&
+						letter != 'X' && letter != '+' && 
+						letter != '-' && letter != '*' &&
+						letter != '/')
+					{
+						
+						System.out.println("Error. Different types of numbers");
+						return 1;
+					}
+					
+				}
+				Checking.StringToArray(Str);
+				ret = Checking.RomeToArab();
+				if(ret == 1)
+				return 1;
+				
+				Checking.Calculation();
+				System.out.println("Желаете повторить ввод? y - yes, n - no)");
+				return 0;
+			}
+		
+			
+			
+			else if( letter != '0' || letter != '1' || 
+				letter != '2' || letter != '3' || 
+				letter != '4' || letter != '5' || 
+				letter != '6' || letter != '7' || 
+				letter != '8' || letter != '9')
+				{
+					for(int k = i; k < Str.length(); k++)
+					{
+						letter = Str.charAt(k);
+						if(letter == '+' || letter == '-' &&
+							letter != '*' && letter != '/')
+						{
+						checkLOP ++;
+						if(checkLOP > 1)
+						{
+							checkLOP = 0;
+							System.out.println("Больше двух операций, ошибка");
+							return 1;
+						}
+						}
+						if( letter != '0' && letter != '1' && 
+							letter != '2' && letter != '3' && 
+							letter != '4' && letter != '5' && 
+							letter != '6' && letter != '7' && 
+							letter != '8' && letter != '9' && 
+							letter != '+' && letter != '-' &&
+							letter != '*' && letter != '/') 
+						{
+							
+							System.out.println("Error. Different types of numbers");
+							return 1;
+						}
+					}
+					Checking.StringToArray(Str);
+					Checking.CheckingRome();
+					if(ret == 1)
+						return 1;
+					
+					Checking.Calculation();
+		
+					return 0;
+				}
+			
+			
+			
+		}
+		
+		
+		
+		
+		return 0;
+		
+	}
+	
+	
+	
+}
