@@ -1,0 +1,735 @@
+import java.util.Scanner; 
+
+public class CoolCalc2 { 
+	public static int detect = 0;
+	public static int countS = 0; // подсчет количество выражений в скобках.
+public static void main(String[] args) 
+{ 
+String Str; 
+double result = 0;
+System.out.println("Введите выражение. Допустимые символы: все цифры; знаки: *, /, +, -, ( , )"); 
+
+Scanner in = new Scanner(System.in); 
+for ( ; ; )
+{
+int exit = 0;
+while (exit == 0)
+{
+int Result_Find_Errors;
+Str = in.next(); 
+Result_Find_Errors = Find_Errors(Str);
+//System.out.println("R_F_E = " + Result_Find_Errors);
+if (Result_Find_Errors == 0)
+{
+	System.out.println("Ошибка ввода. Повторите ввод");
+}
+else if(Result_Find_Errors == 1)
+{
+Str = Check_Multi(Str);
+//System.out.println("Все проверки пройдены. Строка для обработки: " + Str);
+exit = 1;
+int Q = Qual(Str);
+String[] StrAr = new String[Q];
+System.arraycopy(StringToArray(Str, Q), 0, StrAr, 0, Q); // Массив STRar содержит элементы массива выражения
+
+toPolIt(StrAr, Q);
+System.arraycopy(toPolIt(StrAr, Q), 0, StrAr, 0, Q);
+
+result = Calculation(StrAr);
+System.out.println("Результат вычислений равен: " + result);
+}
+
+}
+}
+}
+
+
+
+public static int CheckS(String Str) // проверка корректности введения строк
+{
+	for(;;)
+	{
+	int openSpos = 0, closeSpos = 0;
+	char letter = ' ';
+
+	int newi = 0;
+	int countS = 0;
+	
+	for(int i = 0; i < Str.length(); i++)
+	{
+		
+		letter = Str.charAt(i);
+		if(letter == '(')
+		{
+			int QS = 1;
+			//System.out.println("Найдена открывающая скобка в позиции " + i + "\n Теперь от i-того элемента до "
+			//+ "конечного элемента ищет либо закрывающую скобку.");
+			openSpos = i;
+			
+			for(int k = i+1; k < Str.length(); k++)
+			{
+				letter = Str.charAt(k);
+				if(letter == ')')
+				{
+					//System.out.println("Найдена закрывающая  скобка. Запускаем проверку на минимальную отдаленность");
+					
+					
+					if(k - i < 4)
+					{
+					//	System.out.println("Расстояние между скобками меньше допустимого. Ошибка");
+					return 0;
+					}
+					else
+					{
+						countS++;
+						//System.out.println("Проверка на минимальную отдаленность пройдена");
+						newi = k;
+						closeSpos = k;
+						QS--;
+						if(QS == 0)
+						break;
+					}
+					
+				}
+				else if(k == Str.length() - 1)
+				{
+				//	System.out.println("Закрывающая скобка не найдена. Ошибка");
+				return 0;
+				}
+				else if(letter == '(')
+				{
+					QS++;
+				}
+			}
+			//System.out.println("ТУТ, если есть двойные скобки, должно быть QS = 0, QS = " + QS);
+			if(QS != 0)
+				return 0;
+			for (int j = openSpos; j < closeSpos; j++)
+			{
+					
+								letter = Str.charAt(j);
+								if(letter == '+' || letter == '-' || 
+										letter == '*' || letter == '/')
+								{
+									//System.out.println("Знак внутри скобки найден.\n ");
+									i = newi;
+			//						System.out.println(newi);
+								}
+			}
+			}
+			
+		
+		else if (letter == ')')
+		{
+			//System.out.println("Ошибка. Закрывающая скобка до открывающей");
+return 0;
+		}
+		else if (i == (Str.length()-1))
+		{
+			//System.out.println("Скобки не найдены return 2");
+		return 2;
+		}
+	if(i == (Str.length()-1))
+	{
+		//System.out.println("Все проверки пройдены, проверка дошла до конечной строки, return 1");
+		return 1;
+	}
+	else
+	{
+		//System.out.println("Тут проверка должна продолжаться...");			
+		
+	}	
+	}			
+}
+}
+
+public static int Find_Errors(String Str) {  // проверка коррекнтности введения символов
+char letter = ' '; 
+char letter_0 = ' '; 
+char letter_end = ' ';
+char letter_i = ' ';
+letter_0 = Str.charAt(0); 
+letter_end = Str.charAt(Str.length()-1); 
+//System.out.println("Check2");
+//CHECK2 Проверка условия Неверного символа в начале ввода. УСЛОВИЕ 1
+if( letter_0 == '+' || letter_0 == '-' || 
+letter_0 == '*' || letter_0 == '/' || 
+letter_0 == ')') 
+{ 
+//System.out.println("Error.Check2");
+return 0;
+} 
+////////////////////////////////////////////////////////////////////
+//System.out.println("Check6");
+//CHECK6 Проверка корректности конечного символа
+if( letter_end == '+' || letter_end == '-' || 
+letter_end == '*' || letter_end == '/' || 
+letter_end == '(') 
+{
+//System.out.println("Error: incorrect symbol in the end position");
+//System.out.println("Error.Check6");
+	return 0;
+ 
+} 
+///////////////////////////////////////////////////////////////////
+//System.out.println("Check1");
+//CHECK1 Проверка символов на соответствие допустимых
+
+
+for(int i = 0; i < Str.length(); i++) 
+{
+	letter = Str.charAt(i);  
+	
+letter = Str.charAt(i); 
+if( letter != '+' && letter != '-' && 
+letter != '*' && letter != '/' && 
+letter != ')' && letter != '(' && 
+letter != '0' && letter != '1' && 
+letter != '2' && letter != '3' && 
+letter != '4' && letter != '5' && 
+letter != '6' && letter != '7' && 
+letter != '8' && letter != '9') 
+{ 
+	
+//System.out.println("Error: incorrect symbol"); 
+//System.out.println("Error.Check1");
+return 0;
+} 
+}
+///////////////////////////////////////////////////////////////////
+//System.out.println("Check5");
+//CHECK 5 Последовательности символов неверна.
+
+for( int i = 0; i < Str.length()-1; i++ )
+{
+
+letter = Str.charAt(i);
+letter_i = Str.charAt(i+1);
+if( letter == '+' || letter == '-' || 
+letter == '*' || letter == '/' || 
+letter == '(') 
+{ 
+if (letter_i == '+' || letter_i == '-'|| 
+letter_i == '*' || letter_i == '/' || 
+letter_i == ')') 
+{
+	//System.out.println("Error.Check5");
+	//System.out.print("Ошибка. Последовательность некорректна"); 
+return 0;
+}
+}
+}
+int temp = CheckS(Str);
+if(temp == 0)
+{
+	return 0;
+}
+return 1;
+}
+
+private static String Check_Multi(String Str)//Добавление знака умножения в строку
+{
+int k = Str.length()-1;
+	for( int i = 0; i < k; i++ )
+	{
+	char letter = Str.charAt(i);
+	char letter_i = Str.charAt(i+1);
+	if(letter == ')') 
+	{ 
+	if (letter_i == '0' || letter_i == '(' ||
+		letter_i == '1' || letter_i == '2' || 
+		letter_i == '3' || letter_i == '4' || 
+		letter_i == '5' || letter_i == '6' || 
+		letter_i == '7' || letter_i == '8' || 
+		letter_i == '9') 
+	{
+		int Pre_Pos = i+1;
+	//	System.out.println("Длина строки до исполнения функции AddS: " + Str + " = " + Str.length());
+		Str = AddS(Str, Pre_Pos);
+		//System.out.println("Длина строки послн исполнения функцииAddS: " + Str + " = " + Str.length());
+		k++;
+		//i--;
+		}
+	}
+	if (letter == '0' || letter_i == ')'||
+		letter == '1' || letter == '2'  || 
+		letter == '3' || letter == '4'  || 
+		letter == '5' || letter == '6'  || 
+		letter == '7' || letter == '8'  || 
+		letter == '9') 
+	{ 
+	if (letter_i == '(') 
+	{
+		int Pre_Pos = i+1;
+		AddS(Str, Pre_Pos);
+		Str = AddS(Str, Pre_Pos);
+		k++;
+		//i--;
+	//	System.out.print("ВТорое условие+\n"); }
+	}
+	}
+	
+	}
+	return Str;
+	}
+	
+public static String AddS(String Str, int Pre_Pos) { // Добавление знака умножения
+	   	StringBuffer sb = new StringBuffer(Str);
+	    sb.insert(Pre_Pos,"*");
+	    Str = sb.toString();
+	    //System.out.println("Новая строка str:" + Str);
+		    
+	    return Str;
+}//metode 
+	
+public static int Qual(String SSS) // Нахождение количества ЧИСЕЛ+ЗНАКОВ. ПРОВЕРИТЬ. ВОЗВРАТ ЗНАЧЕНИЯ ДЛЯ ФУНЦИИ ПОСТРОЕНИЯ МАССИВА
+	{
+		
+		// Алгоритм
+		//1. Находим количество знаков, а значит и количество чисел(Число = символ+1)
+		//2. Создадим строковый массив для записи всех действительный знаков.
+		
+		int ValueSign = 0;// количество  знаков
+		int GeneralValuе = 0; // Количество нужных знаков 
+		int ValueNumber = 0;
+		int GVO = 0;
+boolean[] TrueOperation = new boolean[SSS.length()]; // определяем позиции со знаками. Если на позиции есть знак, тогда присваиваем
+// значению массива типа boolean == true. В этой же фунции считаем Количество ЧИСЕЛ.
+		
+	int k = 0;
+	ValueSign = 0;
+	
+	for (int i = 0; i < SSS.length(); i++) // прогоняем строку, ищем знакм операции
+	{
+		if		(SSS.charAt(i) == '+' || SSS.charAt(i) == '-'||
+				SSS.charAt(i) == '*' || SSS.charAt(i) == '/' ||
+				SSS.charAt(i) == '(' || SSS.charAt(i) == ')')
+		{
+			 if		(SSS.charAt(i) == '+' || SSS.charAt(i) == '-'||
+						SSS.charAt(i) == '*' || SSS.charAt(i) == '/')
+					
+				{
+					GVO++;
+				}
+				
+			
+			TrueOperation[i] = true; 
+			ValueSign ++;
+			if(k != 0)
+			{
+			ValueNumber++;
+			k = 0;
+			}
+		}
+		
+		else if (SSS.length() == i+1 )
+			{
+			ValueNumber ++;
+			}
+		else
+			{
+			k++;
+			}
+	}	
+	
+		GeneralValuе = ValueSign + ValueNumber;// РАЗМЕР МАССИВА
+	//	System.out.println("КОЛИЧЕСТВО СИМВОЛОВ: " +  GeneralValuе);
+				
+QQQ.ValueNumber = ValueNumber;
+QQQ.ValueSign = ValueSign;
+QQQ.GeneralValue = GeneralValuе;
+QQQ.ValueOperation = GVO;
+//System.out.println("ПРОВЕРКА МЕТОДА: Количество ЧИСЕЛ" +  QQQ.ValueNumber);
+//System.out.println("ПРОВЕРКА МЕТОДА: Количество ЗНАКОВ" + QQQ.ValueSign);
+//System.out.println("ПРОВЕРКА МЕТОДА: Количество OperationSign" + QQQ.ValueOperation);
+		return GeneralValuе;
+	}
+
+public static double Ariphmetic( double a, double b, String Sym) // Простая арифметика.
+	{
+		double result = 0;
+		if(Sym.equals("+"))
+		{
+			result = a+b;
+		}
+		if(Sym.equals("-"))
+		{
+			result = a-b;
+		}
+		if(Sym.equals("*"))
+		{
+			result = a*b;
+		}
+		if(Sym.equals("/"))
+		{
+			result = a/b;
+		}
+		
+//	System.out.println("Result of Ariph = " + result);
+	return result;
+	}
+
+public static String[] StringToArray(String SSS, int Q) // Строка в Массив
+{
+	Q = QQQ.GeneralValue; 
+	String[] Array = new String[Q]; // Массив должен запрашиваться Q раз.
+	int ArrPos = 0; // Номер ячейки массива. Сначала 0, потом добавляется после каждой записи.
+	StringBuilder sb = new StringBuilder();
+	int sbCount = 0;  // для подсчета крайнего символа, чтобы очистить буфер.
+	//System.out.println("Выводим Строку В начале StringToArray = " + SSS);
+	boolean[] TrueOperation = new boolean[SSS.length()];
+	
+	for (int i = 0; i < SSS.length(); i++) // прогоняем строку, ищем знакм операции
+	{
+		if	(SSS.charAt(i) == '+' || SSS.charAt(i) == '-'||
+			SSS.charAt(i) == '*' || SSS.charAt(i) == '/' ||
+			SSS.charAt(i) == '(' || SSS.charAt(i) == ')')
+			TrueOperation[i] = true; 
+	}
+		
+	for (int i = 0; i < SSS.length(); i++) // прогоняем строку, записываем массив
+	 {
+		
+		if	(TrueOperation[i] == true)
+			{
+		
+			Array[ArrPos] = Character.toString(SSS.charAt(i)); // добавляем символ ( 
+			ArrPos++;
+			}
+		
+		
+		else if  (TrueOperation[i] == false)
+			{
+					sb.append(SSS.charAt(i));
+					sbCount++;
+			for ( ; ; )
+			{ 
+				if (SSS.length() != i+1)
+				{
+				if(TrueOperation[i+1] == true)
+					{
+					Array[ArrPos] = sb.toString();// запись цифры из буфера в массив 
+					ArrPos++;
+					sb.delete(0, sbCount+1);
+					break;
+							
+					}
+				
+				if(TrueOperation[i+1] == false)
+					{
+					i++;
+					sb.append(SSS.charAt(i));
+					sbCount++;
+					
+					}
+				}
+				else if (SSS.length() == i+1)
+				{
+					Array[ArrPos] = sb.toString();// запись цифры из буфера в массив 
+					ArrPos++;
+					sb.delete(0, sbCount+1);
+					break;
+				}
+			}
+			}
+			
+	 }			
+	//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!DELETE
+//	System.out.println("Выводим Массив в конце StringToArray = " + SSS);
+for(int j = 0; j < QQQ.GeneralValue; j++)
+{
+//System.out.print(Array[j] + " ");
+}
+
+	return Array;
+
+}
+
+public static boolean[] TrueOrFalse(String SSS)// Массив для определения операционных символов
+{
+boolean[] TrueOperation = new boolean[SSS.length()];
+	
+	for (int i = 0; i < SSS.length(); i++) // прогоняем строку, ищем знакм операции
+	{
+		if	(SSS.charAt(i) == '+' || SSS.charAt(i) == '-'||
+				SSS.charAt(i) == '*' || SSS.charAt(i) == '/' ||
+				SSS.charAt(i) == '(' || SSS.charAt(i) == ')')
+		TrueOperation[i] = true; 
+		
+	}
+	
+	return TrueOperation;
+}
+
+
+public static String[] toPolIt(String Str[], int Q)
+   {
+
+	
+	
+String[] MainArray = new String[QQQ.GeneralValue]; 
+String[] OperationArray = new String[QQQ.ValueSign];
+Q = QQQ.GeneralValue;
+
+int MAPos = 0; // позиция Главного массива  
+int OAPos = 0; // позиция массива операций
+
+
+
+
+for(int i = 0; i < QQQ.ValueSign; i++)
+{ 
+//	System.out.println(MainArray[i]);
+}
+
+for(int i = 0; i < Q; i++)
+{
+	// Условие для цифр. 
+	if (false ==  Str[i].equals("(") && false == Str[i].equals(")") &&
+		false ==  Str[i].equals("+") && false == Str[i].equals("-") &&
+		false ==  Str[i].equals("*") && false == Str[i].equals("/"))
+	{
+	MainArray[MAPos] = Str[i];
+	MAPos++;  // Перенос к следующему MAPos
+	//System.out.println("Цифра записана = " + MainArray[MAPos-1]);
+	continue;
+	}
+
+	
+ //Условие для открывающей скобки
+	if(true ==  Str[i].equals("(") )
+{
+		//parametr++; // Прибавляем параметр, так как обнаружили скобку.	
+		OperationArray[OAPos] = Str[i]; // Записываем значение текущего элемента массива в свободную стороку. 
+
+
+		OAPos++; // Переходим к следующему, как правило пустому, элементу массива.
+	//	System.out.println("Открывающая скобка записана");
+		continue; // Начинаем Главный цикл заново
+}
+	
+	// Условие для закрывающей скобки
+	
+ if(true ==  Str[i].equals(")")) // Если Правда, что Элемента Массива эквивалентен закрывающей скобке. 
+{
+	 for(int k = 0; k < QQQ.ValueSign; k++)
+	 {
+		// System.out.println("Элемент массива OP" + k + OperationArray[k]);
+		 
+	 };
+	// System.out.println("OPos" + OAPos);
+	 
+	// OAPos--; // Здесь возвращаем OAPos к крайнему заполненному массиву
+for(; ;)
+{
+		//System.out.println("Цикл");
+	if (true ==  OperationArray[OAPos-1].equals("+") || true == OperationArray[OAPos-1].equals("-") ||
+		true ==  OperationArray[OAPos-1].equals("*") || true == OperationArray[OAPos-1].equals("/"))
+		{
+	
+		MainArray[MAPos] = OperationArray[OAPos-1]; // текущий элемент на первой иттерации должен быть Знаком.
+		MAPos ++; 
+		OAPos --; // Смещаем на предыдущий элемент, который может быть чем угодно. 
+		// Если это скобка, тогда мы должны сместить элемент до знака.
+		// Если это знак, тогда нужно выйти из условия и записать элемент в главный массив
+		}
+	else if(true == OperationArray[OAPos-1].equals("("))
+				{
+		OperationArray[OAPos-1] = null;
+		OAPos--;
+			//OAPos--;
+			break;
+		}
+}
+continue;
+
+}
+/////////////////////////////УСЛОВИЕ ДЛЯ ЗНАКОВ. LH and LL
+if(OAPos == 0)	 // Если НЕТ цифры. Цифра отсеяна оператором continue в условии для цифр.
+				// Скобки отсеяны выше.
+{
+	//OAPos++;
+//	System.out.println("УСЛОВИЕ,КОТОРОЕ НЕ ДОЛЖНО СРаБОТАТЬ?");
+	OperationArray[OAPos] = Str[i];	 
+	OAPos++;
+}
+else if (OAPos>0)
+{
+	
+
+	if(true ==  Str[i].equals("+") || true == Str[i].equals("-") ) 
+	{
+		//	System.out.println(" OperationArray[OAPos] =  " + OperationArray[OAPos]);
+			if(OperationArray[OAPos-1].equals("*") ||
+		     OperationArray[OAPos-1].equals("/")) // LH
+			{	
+		//		OAPos--;
+				MainArray[MAPos] = OperationArray[OAPos-1];
+				MAPos++;
+					
+				OperationArray[OAPos-1] = Str[i];	
+				//OAPos++;	
+			//	System.out.println("Записан Знак");
+				//OAPos++;
+			}
+
+
+			else if (OperationArray[OAPos-1].equals("+") ||
+				     OperationArray[OAPos-1].equals("-")) //  LL
+			{	
+				//OAPos--;
+				MainArray[MAPos] = OperationArray[OAPos-1];
+				MAPos++;
+				//OAPos++;
+				
+				OperationArray[OAPos-1] = Str[i];
+				//OAPos++;
+				//System.out.println("Записан Знак");
+				//OAPos++;
+			}
+			
+			else if (OperationArray[OAPos-1].equals("("))
+			{
+				
+				OperationArray[OAPos] = Str[i];
+				OAPos++;
+				//System.out.println("Записана знак после скобки");
+				//OAPos++;
+			}
+	
+	} 
+
+//////////////////////////////////////////////////
+
+
+// HH and HL
+else if(true ==  Str[i].equals("*") || true == Str[i].equals("/"))
+	{
+
+
+			if(OperationArray[OAPos-1].equals("*") ||
+			   OperationArray[OAPos-1].equals("/")) // HH
+			{
+				//OAPos--;
+				MainArray[MAPos] = OperationArray[OAPos-1];
+				MAPos++;
+				
+				OperationArray[OAPos-1] = Str[i];
+	//			OAPos++;
+				//System.out.println("Записан Знак");
+				//
+				//OAPos++;	
+				}
+	
+
+			else if ( OperationArray[OAPos-1].equals("+") ||
+					  OperationArray[OAPos-1].equals("-")) // HL
+			{
+			//OAPos++;
+				OperationArray[OAPos] = Str[i]; // HL. Добавление оператора в строку
+				OAPos++;
+//				System.out.println("Записан Знак");
+				//	OAPos++;
+			}
+			else if (OperationArray[OAPos-1].equals("("))
+			{
+//				OAPos++;
+				OperationArray[OAPos] = Str[i];
+				OAPos++;
+			//	System.out.println("Записан Знак после скобки");
+				//OAPos++;
+			}
+	
+			
+	
+	}
+	
+}
+////////////////////////////////////////////////
+
+}
+
+//System.out.println(" OAPos на последней итерации перед выходом из функции равно = " + OAPos);
+//OAPos--;
+if(OAPos > 0)
+{
+	OAPos--;
+for(int i = OAPos; i >= 0; i--)
+
+{
+	
+MainArray[MAPos] = OperationArray[i];
+MAPos++;
+}
+
+}
+//System.out.println(" OAPos на последней итерации перед выходом из функции равно = " + OAPos);
+
+for (int k = 0; k < QQQ.GeneralValue; k++) // прогоняем строку, показываем массив
+{
+	//System.out.println("Элемент массива MainPos " + k + " = " + MainArray[k]);
+}
+
+for (int k = 0; k < QQQ.ValueSign; k++) // прогоняем строку, показываем массив
+{
+//	System.out.println("Элемент массива OperationPos" + k + " = " + OperationArray[k]);
+}
+
+return MainArray;
+}
+
+
+public static double Calculation(String[] SAr)
+{
+double a, b;
+String Operation;
+int L = QQQ.GeneralValue; // 
+double result = 0;
+
+	
+int count = 0;
+for(int i = 0; i < L; i++) // Главный цикл. Т.к L не меняется до этого этапа, поэтому и L итерации
+{
+	if(count == QQQ.ValueOperation)
+	{
+		break;
+	}
+	//System.out.println("Застревает?");
+	else if( SAr[i].equals("+") || SAr[i].equals("-")||  // Если обнаруживается знак, тогда выполняем арифмитеческое действие.
+		SAr[i].equals("*") || SAr[i].equals("/") )
+	{
+	 b = Double.valueOf(SAr[i-1]); 
+	 a = Double.valueOf(SAr[i-2]);
+	 Operation = SAr[i];
+	 result = Ariphmetic(a, b, Operation);
+	 SAr[i-2] = String.valueOf(result);
+
+	 SAr[i] = null;
+	 SAr[i-1] = null;
+	 
+	 int j = i-1;
+	 
+	
+	 
+	 for(int k = i+1; k < L; k++)  
+	 	{
+		 SAr[j] = SAr[k]; 
+		 j++;
+	 	}
+		L -= 2;
+		
+		
+		 i=0;
+		 
+		 count++;
+ 	}
+	
+	
+}
+
+
+result = Double.valueOf(SAr[0]);
+//System.out.println("возвращаем результат");
+return result;
+}
+}
