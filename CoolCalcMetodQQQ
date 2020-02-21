@@ -1,0 +1,8 @@
+
+public class QQQ {
+public static int ValueNumber;
+public static int ValueSign;
+public static int GeneralValue;
+public static int ValueOperation;
+
+}
